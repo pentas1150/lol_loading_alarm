@@ -3,7 +3,9 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+require('dotenv').config();
 
+const webSocket = require('./socket');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const searchRouter = require('./routes/search');
@@ -13,6 +15,7 @@ const app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.set('port', process.env.PORT || 3000);
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -39,5 +42,11 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.render('error');
 });
+
+const server = app.listen(app.get('port'), () => {
+  console.log('server is running');
+});
+
+webSocket(server);
 
 module.exports = app;

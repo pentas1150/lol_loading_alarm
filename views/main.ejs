@@ -1,30 +1,28 @@
 <html>
 <head>
     <title>bbangtime.gg</title>
-    <!--<script src="/socket.io/socket.io.js"></script>-->
+    <script src="/socket.io/socket.io.js"></script>
 </head>
 
 <body>
     <input type="text" id="summoner_id" size="20">
     <button onclick="btnOnClick()">send</button>
+    <ul id="msg"></ul>
 </body>
 </html>
 <script>
-    const url='http://localhost:3000/search';
+    const url='http://localhost:<%= port %>';
+    const socket=io.connect(url, {
+        path: '/socket.io'
+    });
+
+    socket.on('reply', (data) => {
+        document.getElementById('msg').append(data);
+    });
+
     function btnOnClick(){
         const summoner=document.getElementById('summoner_id').value;
-        const connect_url=`${url}/${summoner}`;
-        const socket=io.connect(connect_url, {
-            path: '/socket.io'
-        });
 
-        socket.on('start', (data) => {
-            //게임 시작 메시지 날라온거 구현
-
-            socket.emit('exit', {//나간다는 메시지 서버로 전송
-                msg: 'exit',
-            });
-        });
-
+        socket.emit('summoner', summoner);
     }
 </script>
