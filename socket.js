@@ -19,15 +19,16 @@ module.exports = (server) => {
             let msg;
             console.log(data);
             const result = await LOL_api(data);
-
+            
+            console.log(`gameLen : ${result.data.gameLength}`);
             if(typeof result === 'undefined') {
                 msg='게임 중이 아닙니다.';
-            } else if(result.data.gameLength!=='0') {
+            } else if(result.data.gameLength!==0) {
                 msg='게임 중입니다.';
             } else {
                 msg='로딩 중입니다.';
             }
-
+            
             socket.emit('reply', msg);
         });
     });

@@ -7,22 +7,34 @@
 <body>
     <input type="text" id="summoner_id" size="20">
     <button onclick="btnOnClick()">send</button>
-    <ul id="msg"></ul>
+    <li id="msg"></li>
 </body>
 </html>
 <script>
-    const url='http://localhost:<%= port %>';
+    let interval, summoner;
+    const url='http://<%= ip %>:<%= port %>';
     const socket=io.connect(url, {
         path: '/socket.io'
     });
 
     socket.on('reply', (data) => {
-        document.getElementById('msg').append(data);
+        /*
+        const node = document.createElement('li');
+        const textnode = document.createTextNode(data);
+        node.appendChild(textnode);
+        document.getElementById('msg').appendChild(node);
+        */
+        if(data==='게임 중입니다.'){
+            clearInterval(interval);
+            alert('게임 시작!');
+        }
     });
 
     function btnOnClick(){
-        const summoner=document.getElementById('summoner_id').value;
+        summoner=document.getElementById('summoner_id').value;
 
-        socket.emit('summoner', summoner);
+        interval = setInterval(() => {
+            socket.emit('summoner', summoner);
+        }, 3000);
     }
 </script>
